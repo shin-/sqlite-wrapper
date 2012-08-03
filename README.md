@@ -1,5 +1,5 @@
 # sqlite-wrapper
-A small wrapper on node-sqlite3 providing simple bindings to most commonly used SQLite functions in standard applications.
+A small wrapper on [node-sqlite3](https://github.com/developmentseed/node-sqlite3) providing simple bindings to most commonly used SQLite functions in standard applications.
 
 ## Installation
 
@@ -23,12 +23,12 @@ A small wrapper on node-sqlite3 providing simple bindings to most commonly used 
                 type: 'TEXT',
                 notnull: true,
                 unique: true,
-                default: 'John Doe'
+                default: "'John Doe'"
             },
             'city_id': {
                 type: 'INTEGER',
                 notnull: true,
-                ref: 'cities.id'
+                ref: 'cities'
             }
         }, callback);
 
@@ -55,7 +55,7 @@ A small wrapper on node-sqlite3 providing simple bindings to most commonly used 
     // Select
     db.select(tableName, 
         {'cities': 'cities.id=people.city_id' },
-        ['cities.name', 'people.name'],
+        { 'cities.name': 'city_name', 'people.name': 'person_name' },
         'people.id IS NOT NULL',
         null,
         callback,
