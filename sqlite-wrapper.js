@@ -44,13 +44,13 @@ Wrapper.prototype.createTable = function(tblName, columns, cb) {
             (columns[key].unique ? ' UNIQUE' : '') +
             (columns[key].notnull ? ' NOT NULL' : '') +
             (deflt ? (' DEFAULT ' + deflt) : '') + 
-            (ref ? ' REFERENCES ' + ref : '');
+            (ref ? (' REFERENCES ' + ref) : '');
         query += columnDec;
     }
     query += ');';
     
     this.__db.run(query, cb);
-}
+};
 
 // Basic CRUD below.
 
@@ -63,7 +63,7 @@ Wrapper.prototype.insert = function(table, obj, cb) {
         ' VALUES ' + dissected.valuesPlaceholder + ';';
     if (DEBUG) console.log(query, '\n', dissected.values);
     this.__db.run(query, dissected.values, cb);
-}
+};
 
 Wrapper.prototype.insertAll = function(table, objs, cb) {
     var columns = Object.keys(objs[0]);
@@ -73,7 +73,7 @@ Wrapper.prototype.insertAll = function(table, objs, cb) {
     });
     var values = objs.reduce(function(prev, item) {
         for (var i = 0, l = columns.length; i < l; i++) {
-            prev.push(item[columns[i]] != undefined ? item[columns[i]] : null);
+            prev.push(item[columns[i]] !== undefined ? item[columns[i]] : null);
         }
         return prev;
     }, []);
@@ -82,7 +82,7 @@ Wrapper.prototype.insertAll = function(table, objs, cb) {
         utils.repeat(' UNION SELECT ' + utils.repeat('?', ',', columns.length), '', objs.length) + ';';
     if (DEBUG) console.log(query, '\n', values);
     this.__db.run(query, values, cb);
-}
+};
 
 /**
  * update('Users', 'username=?', ['foo'], { username : 'bar' }, function(err) {});
@@ -96,7 +96,7 @@ Wrapper.prototype.update = function(table, whereClause, whereValues, obj, cb) {
     query += ' WHERE ' + whereClause + ';';
     if (DEBUG) console.log(query);
     this.__db.run(query, dissected.values.concat(whereValues), cb);
-}
+};
 /**
  * remove('Users', 'email IS NULL', null, function(err) {});
  */
@@ -104,7 +104,7 @@ Wrapper.prototype.remove = function(table, whereClause, whereValues, cb) {
     var query = 'DELETE FROM ' + table + ' WHERE ' + whereClause + ';';
     if (DEBUG) console.log(query);
     this.__db.run(query, whereValues, cb);
-}
+};
 
 /**
  * select('Torrents', { 'Users' : 'Users.id=Torrents.UserId' }, null,
@@ -114,15 +114,15 @@ Wrapper.prototype.select = function(table, joins, columns, whereClause, whereVal
     var query = 'SELECT ' + (distinct ? 'DISTINCT ' : '') + 
         (columns ? utils.cols(columns) : '*') + ' FROM ' + table;
     if (joins) {
-        for (var table in joins) {
-            query += ', ' + table + ' ON ' + joins[table];
+        for (var tbl in joins) {
+            query += ', ' + tbl + ' ON ' + joins[tbl];
         }
     }
     query += ' WHERE ' + whereClause + (order ? ' ORDER BY ' + order : '') +
         (limit ? ' LIMIT ' + limit : '') + ';';
     if (DEBUG) console.log(query, '\n', whereValues);
     this.__db.all(query, whereValues, cb);
-}
+};
 
 /**
  * selectOne('Users', null, { 'Users.username': 'name' }, 'name=?', ['bar'],
@@ -131,14 +131,14 @@ Wrapper.prototype.select = function(table, joins, columns, whereClause, whereVal
 Wrapper.prototype.selectOne = function(table, joins, columns, whereClause, whereValues, cb) {
     var query = 'SELECT ' + (columns ? utils.cols(columns) : '*') + ' FROM ' + table;
     if (joins) {
-        for (var table in joins) {
-            query += ', ' + table + ' ON ' + joins[table];
+        for (var tbl in joins) {
+            query += ', ' + tbl + ' ON ' + joins[tbl];
         }
     }
     query += ' WHERE ' + whereClause + ';';
     if (DEBUG) console.log(query, '\n', whereValues);
     this.__db.get(query, whereValues, cb);
-}
+};
 
 // Shortcut methods for common tasks, using those above.
 
@@ -147,14 +147,14 @@ Wrapper.prototype.selectOne = function(table, joins, columns, whereClause, where
  */
 Wrapper.prototype.find = function(table, id, cb) {
     this.selectOne(table, null, null, 'id=?', [id], cb);
-}
+};
 
 /**
  * list('Users', function(err, users) { });
  */
 Wrapper.prototype.list = function(table, cb) {
     this.select(table, null, null, '1', [], cb);
-}
+};
 
 /**
  * Two ways of using this one:
@@ -168,28 +168,28 @@ Wrapper.prototype.updateById = function(table, id, obj, cb) {
         id = obj.id;
     }
     this.update(table, 'id=?', [id], obj, cb);
-}
+};
 
 /**
  * removeById('Users', 1, function(err) {});
  */
 Wrapper.prototype.removeById = function(table, id, cb) {
     this.remove(table, 'id=?', [id], cb);
-}
+};
 
 // Just a proxy to the underlying sqlite3 functions.
 
 Wrapper.prototype.serialize = function(cb) {
     this.__db.serialize(cb);
-}
+};
 
 Wrapper.prototype.parallelize = function(cb) {
     this.__db.parallelize(cb);
-}
+};
 
 Wrapper.prototype.close = function(cb) {
     this.__db.close(cb);
-}
+};
 
 /**
  * Init with DB filename, or ':memory:' for in-memory DB, or no argument for 

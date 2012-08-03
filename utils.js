@@ -41,7 +41,7 @@ function cols(columns) {
         return columns.join(',');
     }
 
-    res = '';
+    var res = '';
     var first = true;
     for (var col in columns) {
         res += (first ? (first = false, '') : ',') + col + 
