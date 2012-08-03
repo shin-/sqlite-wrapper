@@ -1,0 +1,22 @@
+{
+  "name": "sqlite-wrapper",
+  "version": "0.2.0",
+  "description": "Small wrapper on node-sqlite3",
+  "main": "sqlite-wrapper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "sqlite3": "2.1.x"
+  },
+  "repository": "",
+  "keywords": [
+    "sqlite",
+    "database",
+    "sql",
+    "persistence",
+    "crud"
+  ],
+  "author": "Joffrey F <f.joffrey@gmail.com>",
+  "license": "MIT"
+}
